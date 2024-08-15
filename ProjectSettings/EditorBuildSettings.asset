@@ -6,9 +6,14 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
+    path: Assets/LavGame/Scenes/Boot.unity
+    guid: 80950da004d432748bd9d72a0742f7ca
+  - enabled: 1
+    path: Assets/LavGame/Scenes/MainMenu.unity
+    guid: 13447687bbbd6e045b498133e6888e26
+  - enabled: 1
+    path: Assets/LavGame/Scenes/Gameplay.unity
+    guid: 9904363d97378c14683b43f783630611
   m_configObjects:
-    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b,
-      type: 3}
+    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
