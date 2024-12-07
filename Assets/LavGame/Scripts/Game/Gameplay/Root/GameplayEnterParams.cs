@@ -4,13 +4,11 @@ namespace Gameplay.Root
 {
 	public class GameplayEnterParams : SceneEnterParams
 	{
-		public string SaveFileName { get; }	// файл сохранения
-		public int LevelNumber { get; }		// номер уровня
+		public int MapId { get; }		// номер уровня
 
-		public GameplayEnterParams(string saveFileName, int levelNumber) : base(Scenes.GAMEPLAY)
+		public GameplayEnterParams(int mapId) : base(Scenes.GAMEPLAY)
 		{
-			SaveFileName = saveFileName;
-			LevelNumber = levelNumber;
+			MapId = mapId;
 		}
 	}
 }

@@ -7,6 +7,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using BaCon;
+using Settings;
 
 namespace LavGame.Scripts
 {   
@@ -47,19 +48,30 @@ namespace LavGame.Scripts
             Object.DontDestroyOnLoad(_uiRoot.gameObject);
             _rootContainer.RegisterInstance(_uiRoot);       // запихиваем в общий контейнер. 
 
+            // настройки приложения.
+            var settingsProvider= new SettingsProvider();
+                // регистрируем интерфейс, потому что настройки могут быть загружены из разных мест.
+            _rootContainer.RegisterInstance<ISettingsProvider>(settingsProvider);
+
+            var gameStateProvider = new PlayerPrefsGameStateProvider();
+            gameStateProvider.LoadSettingsState();                                              // загружаем настройки.
+            _rootContainer.RegisterInstance<IGameStateProvider>(gameStateProvider);
+
             // этот контейнер создастся не сразу, а по запросу.
-            _rootContainer.RegisterFactory(_=> new SomeCommonService());
+            _rootContainer.RegisterFactory(_=> new SomeCommonService()).AsSingle(); // регистрируем как синглтон.
         }
 
-        private void RunGame() /* приватный, потому что вызывается внутри класса */
+        private async void RunGame() /* приватный, потому что вызывается внутри класса */
         {
+                // загружаем настройки геймплея. Эта ссылка будет всё время в памяти.
+            await _rootContainer.Resolve<ISettingsProvider>().LoadGameSettings();
 // этот макрос нужен для определения загружаемой сцены. Работает только в редакторе (UNITY_EDITOR).
 #if UNITY_EDITOR
             var sceneName = SceneManager.GetActiveScene().name;     // кэшируем название текущей сцены.
 
             if(sceneName == Scenes.GAMEPLAY)    // если загруженная сцена - нужная нам сцена (GAMEPLAY).
             {
-                var enterParams = new GameplayEnterParams("ddd.save", 1);   // затычка с фейковыми параметрами.
+                var enterParams = new GameplayEnterParams(1);   // затычка с фейковыми параметрами.
                 _coroutines.StartCoroutine(LoadAndStartGameplay(enterParams));     // стартуем игру из редактора.
                 return;
             }
@@ -87,6 +99,11 @@ namespace LavGame.Scripts
             yield return LoadScene(Scenes.GAMEPLAY);    // загрузка основной сцены после пустой.
 
             yield return new WaitForSeconds(1);         // ждём две секунды, чтобы увидеть загрузочный экран.
+
+            var isGameStateLoaded = false;      // создаём флажок для управления корутиною (для ожидания состояния).
+            // достаём из контейнера GameStateProvider в абстрактной форме, загружаем состояние, на которое подписываемся, переключаем флажок.
+            _rootContainer.Resolve<IGameStateProvider>().LoadGameState().Subscribe(_ => isGameStateLoaded = true);
+            yield return new WaitUntil(()=> isGameStateLoaded);
 
             // ищем и кэшируем объект с GameplayEntryPoint.
             var sceneEntryPoint = Object.FindFirstObjectByType<GameplayEntryPoint>();

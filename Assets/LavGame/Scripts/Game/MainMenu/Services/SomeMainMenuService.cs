@@ -8,7 +8,7 @@ namespace MainMenu.Services
 		public SomeMainMenuService(SomeCommonService someCommonService)
 		{
 			_someCommonService = someCommonService;
-			Debug.Log(GetType().Name+"has been created");
+			Debug.Log(GetType().Name+" has been created");
 		}
 	}
 }
