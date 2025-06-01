@@ -11,8 +11,12 @@ public class WorldGameplayRootBinder : MonoBehaviour
 			// реактивная комбинированная подписка.
 	private readonly CompositeDisposable _disposables = new();
 
+	private WorldGameplayRootViewModel _viewModel;
+
 	public void Bind(WorldGameplayRootViewModel viewModel)
 	{
+		_viewModel = viewModel;
+
 		foreach(var buildingViewModel in viewModel.AllBuildings)
 		{       // связывание префаба и View Model для каждой сущности в словаре.
 			CreateBuilding(buildingViewModel);
@@ -57,6 +61,14 @@ public class WorldGameplayRootBinder : MonoBehaviour
 		{	// если поиск по ключу оказался удачным.
 			Destroy(buildingBinder.gameObject);		// удаление всего объекта.
 			_createdBuildingsMap.Remove(buildingViewModel.BuildingEntityId);	// удаление элемента массива.
+		}
+	}
+
+	private void Update()
+	{
+		if(Input.GetKeyDown(KeyCode.Space))
+		{
+			_viewModel.HandleTestInput();
 		}
 	}
 }

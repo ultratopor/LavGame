@@ -1,4 +1,6 @@
-﻿using BaCon;
+﻿using Assets.LavGame.Scripts.Game.Common;
+using Assets.LavGame.Scripts.Game.Gameplay.View.UI;
+using BaCon;
 using Gameplay;
 using Gameplay.Root;
 using LavGame.Scripts;
@@ -6,8 +8,6 @@ using MainMenu.Root;
 using R3;
 using UnityEngine;
 using View;
-using System.Linq;
-using ObservableCollections;
 /*в каждой сцене есть точка входа (GameplayEntryPoint). Снаружи запускается метод Run, чтобы загрузить сцену нужную.
 менеджмент сцен происходит снаружи, поэтому снаружи передаются данные для загрузки сцен (сохранения и т.д.)
 наследуется от монобехи, чтобы можно было ссылку сделать через инспектор.*/
@@ -30,37 +30,47 @@ namespace Root
 			GameplayRegistrations.Register(gameplayContainer, enterParams);     // это статический метод.
 			var gameplayViewModelsContainer = new DIContainer(gameplayContainer);   // так мы отделяем сервис от view.
 			GameplayViewModelsRegistrations.Register(gameplayViewModelsContainer);
-			
-			// для теста:
-			_worldRootBinder.Bind(gameplayViewModelsContainer.Resolve<WorldGameplayRootViewModel>());
 
-			gameplayViewModelsContainer.Resolve<UIGameplayRootViewModel>();
-
-			var uiRoot = gameplayContainer.Resolve<UIRootView>();
-			var uiScene = Instantiate(_sceneUIRootPrefab);      // создаём экземпляр префаба.
-			uiRoot.AttachSceneUI(uiScene.gameObject);           // добавляет uiScene в uiRoot.
-
-			var exitSceneSignalSubj = new Subject<Unit>(); // 
-			uiScene.Bind(exitSceneSignalSubj);
+			InitWorld(gameplayViewModelsContainer);
+			InitUI(gameplayViewModelsContainer);
 
 			Debug.Log($"GAMEPLAY ENTRY POINT: level to load = {enterParams.MapId}");
 
 			// в данном случае в качестве входных параметров передаём строку Fatality.
 			var mainMenuEnterParams = new MainMenuEnterParams("Fatality");
 			var exitParams = new GameplayExitParams(mainMenuEnterParams);
+			var exitSceneRequest = gameplayContainer.Resolve<Subject<Unit>>(AppConstants.EXIT_SCENE_REQUEST_TAG);
 			// отлавливаем сигнал и через select преобразовываем GameplayExitParams
-			var exitToMainMenuSceneSignal = exitSceneSignalSubj.Select(_=> exitParams);
+			var exitToMainMenuSceneSignal = exitSceneRequest.Select(_=> exitParams);
 
 			return exitToMainMenuSceneSignal;
 		}
 
-		private Vector3Int GetRandomPosition()  // для теста.
+		private void InitWorld(DIContainer viewsContainer)
 		{
-			var rX = Random.Range(-10,10);
-			var rY = Random.Range(-10,10);
-			var rPosition = new Vector3Int(rX,rY, 0);
+			// для теста:
+			_worldRootBinder.Bind(viewsContainer.Resolve<WorldGameplayRootViewModel>());
+		}
 
-			return rPosition;
+		private void InitUI(DIContainer viewsContainer)
+		{
+			// создали UI для сцены
+			var uiRoot = viewsContainer.Resolve<UIRootView>();
+			
+			// создали конкретный префаб для этого UI
+			var uiSceneRootBinder = Instantiate(_sceneUIRootPrefab);
+			
+			// прикрепили префаб к UI сцены.
+			uiRoot.AttachSceneUI(uiSceneRootBinder.gameObject);
+
+			// Запрвшиваем корневую модель представления и запихиваем её в связыватель, который создали
+			var uiSceneRootViewModel = viewsContainer.Resolve<UIGameplayRootViewModel>();
+			uiSceneRootBinder.Bind(uiSceneRootViewModel);
+
+			// можно открывать окошки
+			var uiManager = viewsContainer.Resolve<GameplayUIManager>();
+			// открыть первое окно по умолчанию
+			uiManager.OpenScreenGameplay();
 		}
 	}
 }

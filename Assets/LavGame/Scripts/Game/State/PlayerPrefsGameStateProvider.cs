@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using LavGame.Scripts.Game.State.GameResources;
 using R3;
 
 using State.Maps;
@@ -90,7 +91,12 @@ public class PlayerPrefsGameStateProvider : IGameStateProvider
 	{       // создаём состояние игры из сохранённых настроек.
 		_gameStateOrigin = new GameState    // создаём оригинальное сериализуемое состояние через GameState
 		{
-			Maps = new List<MapState>()
+			Maps = new List<MapState>(),
+			Resources = new List<ResourceData>()
+			{
+				new(){Amount = 0, ResourceType = ResourceType.SoftCurrency},
+				new(){Amount = 0, ResourceType = ResourceType.HardCurrency}
+			}
 		};
 
 		return new GameStateProxy(_gameStateOrigin);	// возвращаем завёрнутое в прокси состояние.

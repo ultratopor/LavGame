@@ -1,10 +1,12 @@
 ﻿using System.Linq;
+using Assets.LavGame.Scripts.Game.Common;
+using Assets.LavGame.Scripts.Game.Gameplay.Services;
 using BaCon;
 using Commands;
-
 using Game.Gameplay.Commands;
-
 using Gameplay.Root;
+using LavGame.Scripts.Game.Gameplay.Commands.Handlers;
+using R3;
 using Settings;
 
 namespace Gameplay
@@ -21,10 +23,14 @@ namespace Gameplay
 			var settingsProvider = container.Resolve<ISettingsProvider>();      // кэширование настроек из интерфейса.
 			var gameSettings = settingsProvider.GameSettings;       // кэширование настроек.
 
+			container.RegisterInstance(AppConstants.EXIT_SCENE_REQUEST_TAG, new Subject<Unit>());
+
 			// регистрация нового сервиса.
 			var cmd = new CommandProcessor(gameStateProvider);
 			cmd.RegisterHandler(new CmdPlaceBuildingHandler(gameState));
 			cmd.RegisterHandler(new CmdCreateMapStateHandler(gameState, gameSettings));
+			cmd.RegisterHandler(new CmdResourcesAddHandler(gameState));
+			cmd.RegisterHandler(new CmdResourcesSpendHandler(gameState));
 			container.RegisterInstance<ICommandProcessor>(cmd);     // заворачивание в контейнер.
 
 			/* на данный момент мы знаем, что пытаемся загрузить карту. Но не знаем, есть ли её состояние вообще.
@@ -49,6 +55,8 @@ namespace Gameplay
 
 			// создание фабрики, при запросе которой создаётся новый сервис - одиночка.
 			container.RegisterFactory(_ => new BuildingsService(loadingMap.Buildings, gameSettings.BuildingsSettings, cmd)).AsSingle();
+
+			container.RegisterFactory(_ => new ResourcesService(gameState.Resources, cmd)).AsSingle();
 		}
 	}
 }

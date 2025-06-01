@@ -1,5 +1,4 @@
 ﻿using System;
-using Mono.Cecil;
 
 namespace LavGame.Scripts.Game.State.GameResources
 {
