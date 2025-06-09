@@ -2,7 +2,7 @@
 
 namespace LavGame.Scripts.MVVM.Example
 {
-    // Binder
+    // Binder - создаётся вместе с View.
     public class BuildingNameWindowBinder 
     {
         [SerializeField] private BuildingNameWindowView _view;

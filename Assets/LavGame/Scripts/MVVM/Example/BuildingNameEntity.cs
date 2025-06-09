@@ -3,7 +3,7 @@ using R3;
 
 namespace LavGame.Scripts.MVVM.Example
 {
-    // ViewModel
+    // ViewModel - создаётся, когда запрашивается View, например, по событию или сразу вместе с объектом.
     public class BuildingNameEntity : BuildingEntity
     {
         public readonly ReactiveProperty<string> BuildingName;

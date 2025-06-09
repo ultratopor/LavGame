@@ -2,7 +2,7 @@
 
 namespace LavGame.Scripts.MVVM.Example
 {
-    // Model
+    // Model - создаётся, как и любая логика, при инициализации сцены. Например, в контейнере.
     public class BuildingNameEntityData : BuildingEntityData
     {
         public string BuildingName { get; set; }

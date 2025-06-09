@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace LavGame.Scripts.MVVM.Example
 {
-    // View
+    // View - создаётся по запросу.
     public class BuildingNameWindowView : MonoBehaviour
     {
         public TextMeshProUGUI BuildingNameText;
