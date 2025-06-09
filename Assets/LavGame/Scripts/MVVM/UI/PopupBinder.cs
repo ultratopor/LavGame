@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Assets.LavGame.Scripts.MVVM.UI
+namespace LavGame.Scripts.MVVM.UI
 {
 	public class PopupBinder<T> : WindowBinder<T> where T: WindowViewModel
 	{

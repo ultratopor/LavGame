@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using Assets.LavGame.Scripts.MVVM.UI;
 using Scripts.MVVM.UI;
 using UnityEngine;
 
-namespace Assets.LavGame.Scripts.MVVM.UI
+namespace LavGame.Scripts.MVVM.UI
 {
 	/// <summary>
 	/// Контейнер окон и попапов UI.

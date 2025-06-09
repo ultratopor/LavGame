@@ -1,6 +1,7 @@
-﻿using Assets.LavGame.Scripts.MVVM.UI;
+﻿using Assets.LavGame.Scripts.Game.Gameplay.View.UI.PopupA;
+using LavGame.Scripts.MVVM.UI;
 
-namespace Assets.LavGame.Scripts.Game.Gameplay.View.UI.PopupA
+namespace LavGame.Scripts.Game.Gameplay.View.UI.PopupA
 {
 	public class PopupABinder : PopupBinder<PopupAViewModel>
 	{

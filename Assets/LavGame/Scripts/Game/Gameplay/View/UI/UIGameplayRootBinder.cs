@@ -1,4 +1,5 @@
 ﻿using Assets.LavGame.Scripts.MVVM.UI;
+using LavGame.Scripts.MVVM.UI;
 
 namespace View
 {

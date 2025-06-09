@@ -1,8 +1,9 @@
-﻿using ObservableCollections;
+﻿using Assets.LavGame.Scripts.MVVM.UI;
+using ObservableCollections;
 using R3;
 using UnityEngine;
 
-namespace Assets.LavGame.Scripts.MVVM.UI
+namespace LavGame.Scripts.MVVM.UI
 {
     /// <summary>
     /// Компонент-связыватель корня UI сцены.

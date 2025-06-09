@@ -1,4 +1,5 @@
-﻿using Scripts.MVVM.UI;
+﻿using LavGame.Scripts.MVVM.UI;
+using Scripts.MVVM.UI;
 
 namespace Assets.LavGame.Scripts.MVVM.UI
 {

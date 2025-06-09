@@ -1,5 +1,6 @@
 ﻿using Assets.LavGame.Scripts.Game.Gameplay.View.UI.ScreenGameplay;
 using Assets.LavGame.Scripts.MVVM.UI;
+using LavGame.Scripts.MVVM.UI;
 using UnityEngine;
 using UnityEngine.UI;
 
