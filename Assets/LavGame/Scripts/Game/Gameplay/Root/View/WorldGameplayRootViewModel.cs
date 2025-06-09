@@ -1,39 +1,43 @@
-﻿using Assets.LavGame.Scripts.Game.Gameplay.Services;
+﻿using System;
+using Assets.LavGame.Scripts.Game.Gameplay.Services;
+using LavGame.Scripts.Game.Gameplay.View.Buildings;
 using LavGame.Scripts.Game.State.GameResources;
 using ObservableCollections;
-using UnityEngine;
 using R3;
-using System;
+using UnityEngine;
 using Random = UnityEngine.Random;
 
 
-public class WorldGameplayRootViewModel
+namespace LavGame.Scripts.Game.Gameplay.Root.View
 {
-	public readonly IObservableCollection<BuildingViewModel> AllBuildings;  // реактивный список View Model.
-
-	private readonly ResourcesService _resourcesService;
-
-	public WorldGameplayRootViewModel(BuildingsService buildingsService, ResourcesService resourcesService)
+	public class WorldGameplayRootViewModel
 	{
-		_resourcesService = resourcesService;
-		AllBuildings = buildingsService.AllBuildings;
+		//public readonly IObservableCollection<BuildingViewModel> AllBuildings;  // реактивный список View Model.
 
-		resourcesService.ObserveResource(ResourceType.SoftCurrency).Subscribe(newValue => Debug.Log($"SoftCurrency: {newValue}"));
-		resourcesService.ObserveResource(ResourceType.HardCurrency).Subscribe(newValue => Debug.Log($"HardCurrency: {newValue}"));
-	}
+		private readonly ResourcesService _resourcesService;
 
-	public void HandleTestInput()
-	{
-		var rResourceType = (ResourceType)Random.Range(0, Enum.GetNames(typeof(ResourceType)).Length);
-		var rValue = Random.Range(1, 1000);
-		var rOperation=Random.Range(0,2);
-
-		if(rOperation == 0)
+		public WorldGameplayRootViewModel(/*BuildingsService buildingsService,*/ ResourcesService resourcesService)
 		{
-			_resourcesService.AddResources(rResourceType, rValue);
-			return;
+			_resourcesService = resourcesService;
+			//AllBuildings = buildingsService.AllBuildings;
+
+			resourcesService.ObserveResource(ResourceType.SoftCurrency).Subscribe(newValue => Debug.Log($"SoftCurrency: {newValue}"));
+			resourcesService.ObserveResource(ResourceType.HardCurrency).Subscribe(newValue => Debug.Log($"HardCurrency: {newValue}"));
 		}
 
-		_resourcesService.TrySpendResources(rResourceType, rValue);
+		public void HandleTestInput()
+		{
+			var rResourceType = (ResourceType)Random.Range(0, Enum.GetNames(typeof(ResourceType)).Length);
+			var rValue = Random.Range(1, 1000);
+			var rOperation=Random.Range(0,2);
+
+			if(rOperation == 0)
+			{
+				_resourcesService.AddResources(rResourceType, rValue);
+				return;
+			}
+
+			_resourcesService.TrySpendResources(rResourceType, rValue);
+		}
 	}
 }

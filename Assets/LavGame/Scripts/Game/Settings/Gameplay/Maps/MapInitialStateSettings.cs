@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using LavGame.Scripts.Game.Settings.Gameplay.Buildings;
 using Settings.Gameplay.Buildings;
 
 namespace Settings.Gameplay.Maps

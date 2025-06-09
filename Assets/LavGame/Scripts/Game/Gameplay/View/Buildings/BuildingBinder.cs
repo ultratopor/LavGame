@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using LavGame.Scripts.Game.Gameplay.View.Buildings;
+using UnityEngine;
 
 public class BuildingBinder : MonoBehaviour
 {

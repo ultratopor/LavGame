@@ -19,7 +19,7 @@ namespace Assets.LavGame.Scripts.Game.Gameplay.View.UI
 
 		public ScreenGameplayViewModel OpenScreenGameplay()
 		{
-			// создаём вьюмодель, всунув туда этот менеджер, чтобы можно было воспользоватться другими методами этого класса.
+			// создаём вьюмодель, всунув туда этот менеджер, чтобы можно было воспользоваться другими методами этого класса.
 			var viewModel = new ScreenGameplayViewModel(this, _exitSceneRequest);
 			// чтобы избежать циклических зависимостей, кешируем RootViewModel при запросе окна, а не в конструкторе.
 			var rootUI = Container.Resolve<UIGameplayRootViewModel>();

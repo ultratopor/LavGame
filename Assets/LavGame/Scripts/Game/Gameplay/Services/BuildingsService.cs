@@ -1,8 +1,5 @@
 using System;
 using System.Collections.Generic;
-
-using Commands;
-
 using ObservableCollections;
 
 using R3;
@@ -11,49 +8,49 @@ using Settings.Gameplay.Buildings;
 
 using UnityEngine;
 
-// сервисы являются прослойкой между View моделью и обработчиком команд. Этот посылает сигналы в обработчик команд на
-// размещение здания, перемещение и удаление.
+/*// СЃРµСЂРІРёСЃС‹ СЏРІР»СЏСЋС‚СЃСЏ РїСЂРѕСЃР»РѕР№РєРѕР№ РјРµР¶РґСѓ View РјРѕРґРµР»СЊСЋ Рё РѕР±СЂР°Р±РѕС‚С‡РёРєРѕРј РєРѕРјР°РЅРґ. Р­С‚РѕС‚ РїРѕСЃС‹Р»Р°РµС‚ СЃРёРіРЅР°Р»С‹ РІ РѕР±СЂР°Р±РѕС‚С‡РёРє РєРѕРјР°РЅРґ РЅР°
+// СЂР°Р·РјРµС‰РµРЅРёРµ Р·РґР°РЅРёСЏ, РїРµСЂРµРјРµС‰РµРЅРёРµ Рё СѓРґР°Р»РµРЅРёРµ.
 public class BuildingsService
 {
 	private readonly ICommandProcessor _cmd;
 
-	// ключом будет Building Entity ID.
+	// пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ Building Entity ID.
 	private readonly Dictionary<int, BuildingViewModel> _buildingsMap = new();
 
-	// создаём динамический массив и добавляем его в публичное свойство, потому что интерфейсы нельзя добавлять
-	// в массивы через Add/Remove. Реактивный массив нужен, чтобы можно было подписываться на него.
+	// пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+	// пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ Add/Remove. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ.
 	private readonly ObservableList<BuildingViewModel> _allBuildings = new();
 
-	// создаём динамический массив настроек здания по TypeId
+	// пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ TypeId
 	private readonly Dictionary<string, BuildingSettings> _buildingSettingsMap = new();
 	public IObservableCollection<BuildingViewModel> AllBuildings => _allBuildings;
 
-	/* buildings - реактивное состояние посредник, cmd - отсюда можно посылать команды для изменения состояния.
-	* сервис не меняет состояния. Это могут делать только команды. 
-	* Принимает реактивный список состояний строений. На основании него создается словарь View Model, обновляющийся 
-	* автоматически согласно подписке.*/
+	/* buildings - пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, cmd - пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
+	* пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ. пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ. 
+	* пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ. пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ View Model, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ 
+	* пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.#1#
 	public BuildingsService(IObservableCollection<BuildingEntityProxy> buildings, BuildingsSettings buildingsSettings, ICommandProcessor cmd)
 	{
 		this._cmd = cmd;
 
 		foreach(var buildingSettings in buildingsSettings.AllBuildings)
-		{       // кэшируем настройки зданий.
+		{       // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.
 			_buildingSettingsMap[buildingSettings.TypeId] = buildingSettings;
 		}
 
-		// создание View Model на каждое актуальное состояние.
+		// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ View Model пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
 		foreach(var buildingEntity in buildings)
 		{
 			CreateBuildingViewModel(buildingEntity);
 		}
 
-		// создание View Model при обновлении подписки.
+		// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ View Model пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
 		buildings.ObserveAdd().Subscribe(e =>
 		{
 			CreateBuildingViewModel(e.Value);
 		});
 
-		// удаление View Model при обновлении подписки.
+		// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ View Model пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
 		buildings.ObserveRemove().Subscribe(e =>
 		{
 			RemoveBuildingViewModel(e.Value);
@@ -61,8 +58,8 @@ public class BuildingsService
 	}
 
 	public bool PlaceBuilding(string buildingTypeId, Vector3Int position)
-	{       // размещает здание. bool - чтобы View Models могли видеть результат перемещения.
-			// buildingTypeId - тип здания.
+	{       // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ. bool - пїЅпїЅпїЅпїЅпїЅ View Models пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
+			// buildingTypeId - пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.
 		var command = new CmdPlaceBuilding(buildingTypeId, position);
 		var result = _cmd.Process(command);
 
@@ -70,23 +67,23 @@ public class BuildingsService
 	}
 
 	public bool MoveBuilding(int buildingEntityId, Vector3Int newPosition)
-	{       // перемещает здание. buildingTypeId - идентификатор здания.
+	{       // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ. buildingTypeId - пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.
 		throw new NotImplementedException();
 	}
 
 	public bool DeleteBuilding(int BuildingEntityId)
-	{       // удаляет здание.
+	{       // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.
 		throw new NotImplementedException();
 	}
 
 	private void CreateBuildingViewModel(BuildingEntityProxy buildingEntity)
-	{       // создаёт слой посредника посредника (Proxy) с данными здания и добавляет это в динамический массив.
-		// кэшируем настройку по ключу.
+	{       // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (Proxy) пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.
+		// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ.
 		var buildingSettings = _buildingSettingsMap[buildingEntity.TypeId];
 		var buildingViewModel = new BuildingViewModel(buildingEntity, buildingSettings, this);
 
 		_allBuildings.Add(buildingViewModel);
-		_buildingsMap[buildingEntity.Id] = buildingViewModel;   // заполнение словаря View Model по ключу - ID.
+		_buildingsMap[buildingEntity.Id] = buildingViewModel;   // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ View Model пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ - ID.
 	}
 
 	private void RemoveBuildingViewModel(BuildingEntityProxy buildingEntity)
@@ -97,4 +94,4 @@ public class BuildingsService
 			_buildingsMap.Remove(buildingEntity.Id);
 		}
 	}
-}
+}*/

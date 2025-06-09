@@ -7,14 +7,14 @@
       "dependencies": {
         "com.unity.modules.imgui": "1.0.0"
       },
-      "hash": "378fa771fccd2e6299ae54c10213a3d4b09aaa1f"
+      "hash": "fbc12b2c0b6a1ee5ce7d534f9db936bc59069219"
     },
     "com.github-glitchenzo.nugetforunity": {
       "version": "https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "90fa6db024148d466fe738f58fd4263c7267346b"
+      "hash": "a22299e7e94eaa13ac17b326e0de8f2d3afa9e46"
     },
     "com.unity.ai.navigation": {
       "version": "2.0.6",
@@ -220,6 +220,13 @@
         "com.unity.modules.jsonserialize": "1.0.0"
       },
       "url": "https://packages.unity.com"
+    },
+    "jillejr.newtonsoft.json-for-unity.converters": {
+      "version": "https://github.com/jilleJr/Newtonsoft.Json-for-Unity.Converters.git#1.6.3",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "464cdbbabb67661751cb73fd39c4e99e5b5eedb0"
     },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",

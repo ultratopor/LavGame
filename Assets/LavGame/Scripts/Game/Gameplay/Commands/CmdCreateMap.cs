@@ -1,13 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Game.Gameplay.Commands
+﻿namespace LavGame.Scripts.Game.Gameplay.Commands
 {
-	public class CmdCreateMap
+    /// <summary>
+    /// Команда создания состояния карты
+    /// </summary>
+	public class CmdCreateMap : ICommand
 	{
+		public readonly int MapId;
 
-	}
+        public CmdCreateMap(int mapId)
+        {
+            MapId = mapId;
+        }
+    }
 }

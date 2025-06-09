@@ -1,37 +1,38 @@
 ﻿using System.Linq;
-using R3;
+using LavGame.Scripts.Game.State.Entities;
 using ObservableCollections;
+using R3;
 
-namespace State.Maps
+namespace LavGame.Scripts.Game.State.Maps
 {
 	public class Map
 	{
-		public ObservableList<BuildingEntityProxy> Buildings { get; } = new();
-		public MapState Origin { get; }
+		public ObservableList<Entity> Entities { get; } = new();
+		public MapData Origin { get; }
 		public int Id => Origin.Id;
 
-		public Map(MapState mapState)
+		public Map(MapData mapData)
 		{
-			/* проходимся по строениям в оригинальном состоянии (MapState), и для каждого состояния добавляем такое же в заместителе
+			/* проходимся по сущностям в оригинальном состоянии (MapState), и для каждого состояния добавляем такое же в заместителе
 			 * (proxy), и закидываем его  в ObservableList */
-			Origin = mapState;
+			Origin = mapData;
 
-			mapState.Buildings.ForEach(buildingOrigin => Buildings.Add(new BuildingEntityProxy(buildingOrigin)));
+			mapData.Entities.ForEach(entityData => Entities.Add(EntitiesFactory.CreateEntity(entityData)));
 
-			Buildings.ObserveAdd().Subscribe(e =>       // е - это аргумент, а не объект.
+			Entities.ObserveAdd().Subscribe(e =>       // е - это аргумент, а не объект.
 			{       // подписка на добавление элемента в список.
-				var addedBuildingEntity=e.Value;            // это уже объект, добавляемый ы список.
+				var addedEntity = e.Value;            // это уже объект, добавляемый ы список.
 
-				// в оригинальное состояние в список сторений добавляем новый элемент, который собираем из прокси.
-				mapState.Buildings.Add(addedBuildingEntity.Origin);
+				// в оригинальное состояние в список строений добавляем новый элемент, который собираем из прокси.
+				mapData.Entities.Add(addedEntity.Origin);
 			});
 
-			Buildings.ObserveRemove().Subscribe(e =>
+			Entities.ObserveRemove().Subscribe(e =>
 			{       // когда удаляется объект.
-				var removedBuildingEntityProxy = e.Value;
+				var removedEntity = e.Value;
 				// ищем в списке конкретный элемент.
-				var removedBuildingEntity = mapState.Buildings.FirstOrDefault(b=>b.Id==removedBuildingEntityProxy.Id);
-				mapState.Buildings.Remove(removedBuildingEntity);      // если он существует, то удаляем его.
+				var removedEntityData = mapData.Entities.FirstOrDefault(b=> b.UniqueId == removedEntity.UniqueId);
+				mapData.Entities.Remove(removedEntityData);      // если он существует, то удаляем его.
 			});
 		}
 	}

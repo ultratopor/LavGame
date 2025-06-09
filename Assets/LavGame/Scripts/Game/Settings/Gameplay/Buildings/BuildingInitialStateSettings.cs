@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Settings.Gameplay.Buildings
+namespace LavGame.Scripts.Game.Settings.Gameplay.Buildings
 {
 	/// <summary>
 	/// состояние здания для загрузки после сохранения
@@ -11,6 +11,6 @@ namespace Settings.Gameplay.Buildings
 	{
 		public string TypeId;
 		public int Level;
-		public Vector3Int Position;
+		public Vector2Int Position;
 	}
 }

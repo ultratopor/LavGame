@@ -4,6 +4,8 @@ using BaCon;
 using Gameplay;
 using Gameplay.Root;
 using LavGame.Scripts;
+using LavGame.Scripts.Game.Gameplay.Root;
+using LavGame.Scripts.Game.Gameplay.Root.View;
 using MainMenu.Root;
 using R3;
 using UnityEngine;

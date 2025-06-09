@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Commands
+namespace LavGame.Scripts.Game.Gameplay.Commands
 {
 	/// <summary>
 	/// команда поместить здание определённого типа и пoзиции

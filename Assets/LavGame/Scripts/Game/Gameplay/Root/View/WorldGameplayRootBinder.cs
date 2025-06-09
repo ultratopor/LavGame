@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using LavGame.Scripts.Game.Gameplay.Root.View;
+using LavGame.Scripts.Game.Gameplay.View.Buildings;
 using ObservableCollections;
 using R3;
 using UnityEngine;
@@ -16,7 +18,7 @@ public class WorldGameplayRootBinder : MonoBehaviour
 	public void Bind(WorldGameplayRootViewModel viewModel)
 	{
 		_viewModel = viewModel;
-
+/*
 		foreach(var buildingViewModel in viewModel.AllBuildings)
 		{       // связывание префаба и View Model для каждой сущности в словаре.
 			CreateBuilding(buildingViewModel);
@@ -33,7 +35,7 @@ public class WorldGameplayRootBinder : MonoBehaviour
 		{
 			DestroyBuilding(e.Value);
 		}));
-
+*/
 	}
 	private void OnDestroy()
 	{		// отписка от событий при удалении.

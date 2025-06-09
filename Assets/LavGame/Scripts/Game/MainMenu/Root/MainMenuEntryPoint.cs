@@ -1,7 +1,5 @@
 using BaCon;
-using Gameplay;
 using Gameplay.Root;
-using LavGame.Scripts;
 using MainMenu;
 using MainMenu.Root;
 using R3;
@@ -10,40 +8,43 @@ using UnityEngine;
 using View;
 using Random = UnityEngine.Random;
 
-public class MainMenuEntryPoint : MonoBehaviour
+namespace LavGame.Scripts.Game.MainMenu.Root
 {
-	// в этом месте будет связываться вид и логика, согласно паттерну MVVM.
-
-	[SerializeField] private UIMainMenuRootBinder _sceneUIRootPrefab;
-
-	public Observable<MainMEnuExitParams> Run(DIContainer mainMenuContainer, MainMenuEnterParams enterParams)   // здесь будет загружаться DiContainer, временно загружается uiRoot.
+	public class MainMenuEntryPoint : MonoBehaviour
 	{
-		// сначала регистрируем все сущности, которые нужны для этой сцены.
-		MainMenuRegistrations.Register(mainMenuContainer, enterParams);     // это статический метод.
-		var mainMenuViewModelsContainer = new DIContainer(mainMenuContainer);   // так мы отделяем сервис от view.
-		MainMenuViewModelsRegistrations.Register(mainMenuViewModelsContainer);
+		// пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ MVVM.
 
-		//
+		[SerializeField] private UIMainMenuRootBinder _sceneUIRootPrefab;
 
-		// для теста:
-		mainMenuViewModelsContainer.Resolve<UIMainMenuRootViewModel>();
+		public Observable<MainMEnuExitParams> Run(DIContainer mainMenuContainer, MainMenuEnterParams enterParams)   // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ DiContainer, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ uiRoot.
+		{
+			// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ.
+			MainMenuRegistrations.Register(mainMenuContainer, enterParams);     // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ.
+			var mainMenuViewModelsContainer = new DIContainer(mainMenuContainer);   // пїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ view.
+			MainMenuViewModelsRegistrations.Register(mainMenuViewModelsContainer);
 
-		var uiRoot = mainMenuContainer.Resolve<UIRootView>();		// вытаскиваем из родительского контейнера данные.
-		var uiScene = Instantiate(_sceneUIRootPrefab);      // создаём экземпляр префаба.
-		uiRoot.AttachSceneUI(uiScene.gameObject);           // добавляет uiScene в uiRoot.
+			//
 
-		var exitSignalSubj = new Subject<Unit>();
-		uiScene.Bind(exitSignalSubj);
+			// пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ:
+			mainMenuViewModelsContainer.Resolve<UIMainMenuRootViewModel>();
 
-		Debug.Log($"MAIN MENU ENTRY POINT: Run main menu scene. Results: {enterParams?.Result}");
+			var uiRoot = mainMenuContainer.Resolve<UIRootView>();		// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.
+			var uiScene = Instantiate(_sceneUIRootPrefab);      // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
+			uiRoot.AttachSceneUI(uiScene.gameObject);           // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ uiScene пїЅ uiRoot.
 
-		var saveFileName = "ololo.save";
-		var levelNumber = Random.Range(0,300);
-		var gameplayEnterParams = new GameplayEnterParams(0);
-		var mainMenuExitParams = new MainMEnuExitParams(gameplayEnterParams);
-		// конвертируем mainMenuExitParams в Subject.
-		var exitToGameplaySceneSignal = exitSignalSubj.Select(_=> mainMenuExitParams);
+			var exitSignalSubj = new Subject<Unit>();
+			uiScene.Bind(exitSignalSubj);
 
-		return exitToGameplaySceneSignal;
+			Debug.Log($"MAIN MENU ENTRY POINT: Run main menu scene. Results: {enterParams?.Result}");
+
+			var saveFileName = "ololo.save";
+			var levelNumber = Random.Range(0,300);
+			var gameplayEnterParams = new GameplayEnterParams(0);
+			var mainMenuExitParams = new MainMEnuExitParams(gameplayEnterParams);
+			// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ mainMenuExitParams пїЅ Subject.
+			var exitToGameplaySceneSignal = exitSignalSubj.Select(_=> mainMenuExitParams);
+
+			return exitToGameplaySceneSignal;
+		}
 	}
 }

@@ -2,14 +2,13 @@
 using Assets.LavGame.Scripts.Game.Common;
 using Assets.LavGame.Scripts.Game.Gameplay.Services;
 using BaCon;
-using Commands;
-using Game.Gameplay.Commands;
 using Gameplay.Root;
+using LavGame.Scripts.Game.Gameplay.Commands;
 using LavGame.Scripts.Game.Gameplay.Commands.Handlers;
 using R3;
 using Settings;
 
-namespace Gameplay
+namespace LavGame.Scripts.Game.Gameplay.Root
 {
 	/// <summary>
 	/// Регистрация сервисов
@@ -27,8 +26,7 @@ namespace Gameplay
 
 			// регистрация нового сервиса.
 			var cmd = new CommandProcessor(gameStateProvider);
-			cmd.RegisterHandler(new CmdPlaceBuildingHandler(gameState));
-			cmd.RegisterHandler(new CmdCreateMapStateHandler(gameState, gameSettings));
+			cmd.RegisterHandler(new CmdCreateMapHandler(gameState, gameSettings));
 			cmd.RegisterHandler(new CmdResourcesAddHandler(gameState));
 			cmd.RegisterHandler(new CmdResourcesSpendHandler(gameState));
 			container.RegisterInstance<ICommandProcessor>(cmd);     // заворачивание в контейнер.
@@ -43,7 +41,7 @@ namespace Gameplay
 			if(loadingMap == null)
 			{
 				// создание состояния, если его ещё нет, через команду.
-				var command = new CmdCreateMapState(loadingMapId);
+				var command = new CmdCreateMap(loadingMapId);
 				var success = cmd.Process(command);
                 if (!success)
                 {
@@ -54,7 +52,7 @@ namespace Gameplay
             }
 
 			// создание фабрики, при запросе которой создаётся новый сервис - одиночка.
-			container.RegisterFactory(_ => new BuildingsService(loadingMap.Buildings, gameSettings.BuildingsSettings, cmd)).AsSingle();
+			//container.RegisterFactory(_ => new BuildingsService(loadingMap.Buildings, gameSettings.BuildingsSettings, cmd)).AsSingle();
 
 			container.RegisterFactory(_ => new ResourcesService(gameState.Resources, cmd)).AsSingle();
 		}

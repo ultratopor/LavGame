@@ -1,9 +1,5 @@
-﻿using System.Linq;
-
-using UnityEngine;
-
-namespace Commands
-{
+﻿namespace LavGame.Scripts.Game.Gameplay.Commands.Handlers
+{/*
 	/// <summary>
 	/// обработчик определённой (CmdPlaceBuilding) команды
 	/// </summary>
@@ -41,5 +37,5 @@ namespace Commands
 			// в будущем можно будет запихнуть проверку на возможности строительства, а пока что возвращается всегда истина.
 			return true;
 		}
-	}
+	}*/
 }

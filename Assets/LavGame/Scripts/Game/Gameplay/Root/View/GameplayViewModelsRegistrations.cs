@@ -2,7 +2,7 @@
 using Assets.LavGame.Scripts.Game.Gameplay.View.UI;
 using BaCon;
 
-namespace View
+namespace LavGame.Scripts.Game.Gameplay.Root.View
 {
 	public static class GameplayViewModelsRegistrations
 	{       // этот контейнер содержит только view модели. Пр этом имеет доступ на сцену и в проект.
@@ -12,7 +12,7 @@ namespace View
 			container.RegisterFactory(c => new UIGameplayRootViewModel()).AsSingle();
 			container.RegisterFactory(c => new WorldGameplayRootViewModel
 			(
-				c.Resolve<BuildingsService>(),
+				//c.Resolve<BuildingsService>(),
 				c.Resolve<ResourcesService>())
 			).AsSingle();
 		}

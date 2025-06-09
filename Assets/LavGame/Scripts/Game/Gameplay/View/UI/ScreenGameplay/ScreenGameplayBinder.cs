@@ -1,8 +1,9 @@
-﻿using Assets.LavGame.Scripts.MVVM.UI;
+﻿using Assets.LavGame.Scripts.Game.Gameplay.View.UI.ScreenGameplay;
+using Assets.LavGame.Scripts.MVVM.UI;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Assets.LavGame.Scripts.Game.Gameplay.View.UI.ScreenGameplay
+namespace LavGame.Scripts.Game.Gameplay.View.UI.ScreenGameplay
 {
 	public class ScreenGameplayBinder : WindowBinder<ScreenGameplayViewModel>
 	{
