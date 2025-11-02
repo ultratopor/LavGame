@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using LavGame.Scripts.Game.State.Entities;
-using LavGame.Scripts.Game.State.Entities.Mergeable.Buildings;
 using LavGame.Scripts.Game.State.Maps;
 using LavGame.Scripts.Game.State.Root;
 using Settings;
@@ -38,20 +37,11 @@ namespace LavGame.Scripts.Game.Gameplay.Commands.Handlers
 			var newMapInitialStateSettings = newMapSettings.InitialStateSettings;
 
 			var initialEntities = new List<EntityData>();
-			foreach(var buildingSettings in newMapInitialStateSettings.Buildings)
+			foreach(var entitySettings in newMapInitialStateSettings.Entities)
 			{		// создали и добавили в список состояния построек по умолчанию.
-				var initialBuilding = new BuildingEntityData
-				{
-					UniqueId = _gameState.CreateEntityId(),
-					ConfigId = buildingSettings.TypeId,
-					Type = EntityType.Building,
-					Position = buildingSettings.Position,
-					Level = buildingSettings.Level,
-					IsAutoCollectionEnabled = false,
-					LastClickedTimeMS = 0
-				};
-
-				initialEntities.Add(initialBuilding);
+				var initialEntity = EntitiesDataFactory.CreateEntity(entitySettings);
+				initialEntity.UniqueId = _gameState.CreateEntityId();
+				initialEntities.Add(initialEntity);
 			}
 
 			var newMapState = new MapData

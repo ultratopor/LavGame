@@ -5,6 +5,7 @@ using BaCon;
 using Gameplay.Root;
 using LavGame.Scripts.Game.Gameplay.Commands;
 using LavGame.Scripts.Game.Gameplay.Commands.Handlers;
+using LavGame.Scripts.Game.Gameplay.Services;
 using R3;
 using Settings;
 
@@ -52,7 +53,7 @@ namespace LavGame.Scripts.Game.Gameplay.Root
             }
 
 			// создание фабрики, при запросе которой создаётся новый сервис - одиночка.
-			//container.RegisterFactory(_ => new BuildingsService(loadingMap.Buildings, gameSettings.BuildingsSettings, cmd)).AsSingle();
+			container.RegisterFactory(_ => new BuildingsService(loadingMap.Entities, gameSettings.entitiesSettings, cmd)).AsSingle();
 
 			container.RegisterFactory(_ => new ResourcesService(gameState.Resources, cmd)).AsSingle();
 		}

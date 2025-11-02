@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using LavGame.Scripts.Game.Settings.Gameplay.Buildings;
-using Settings.Gameplay.Buildings;
+using LavGame.Scripts.Game.Settings.Gameplay.Entities;
+using LavGame.Scripts.Game.Settings.Gameplay.Entities.Buildings;
 
-namespace Settings.Gameplay.Maps
+namespace LavGame.Scripts.Game.Settings.Gameplay.Maps
 {
 	/// <summary>
 	/// Список состояний зданий для загрузки после сохранения
@@ -11,6 +11,6 @@ namespace Settings.Gameplay.Maps
 	[Serializable]
 	public class MapInitialStateSettings
 	{
-		public List<BuildingInitialStateSettings> Buildings;    // список состояний зданий.
+		public List<EntityInitialStateSettings> Entities;    // список состояний зданий.
 	}
 }

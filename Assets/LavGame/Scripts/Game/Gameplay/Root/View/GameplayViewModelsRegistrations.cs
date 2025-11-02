@@ -1,6 +1,7 @@
 ﻿using Assets.LavGame.Scripts.Game.Gameplay.Services;
 using Assets.LavGame.Scripts.Game.Gameplay.View.UI;
 using BaCon;
+using LavGame.Scripts.Game.Gameplay.Services;
 
 namespace LavGame.Scripts.Game.Gameplay.Root.View
 {
@@ -12,7 +13,7 @@ namespace LavGame.Scripts.Game.Gameplay.Root.View
 			container.RegisterFactory(c => new UIGameplayRootViewModel()).AsSingle();
 			container.RegisterFactory(c => new WorldGameplayRootViewModel
 			(
-				//c.Resolve<BuildingsService>(),
+				c.Resolve<BuildingsService>(),
 				c.Resolve<ResourcesService>())
 			).AsSingle();
 		}

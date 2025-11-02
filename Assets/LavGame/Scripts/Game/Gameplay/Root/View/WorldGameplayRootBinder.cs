@@ -1,76 +1,78 @@
 ﻿using System.Collections.Generic;
-using LavGame.Scripts.Game.Gameplay.Root.View;
 using LavGame.Scripts.Game.Gameplay.View.Buildings;
 using ObservableCollections;
 using R3;
 using UnityEngine;
 
-public class WorldGameplayRootBinder : MonoBehaviour
+namespace LavGame.Scripts.Game.Gameplay.Root.View
 {
-	// создание динамического массива с префабами ради быстрого поиска по ключу.
-	private readonly Dictionary<int, BuildingBinder> _createdBuildingsMap = new();
-
-			// реактивная комбинированная подписка.
-	private readonly CompositeDisposable _disposables = new();
-
-	private WorldGameplayRootViewModel _viewModel;
-
-	public void Bind(WorldGameplayRootViewModel viewModel)
+	public class WorldGameplayRootBinder : MonoBehaviour
 	{
-		_viewModel = viewModel;
-/*
-		foreach(var buildingViewModel in viewModel.AllBuildings)
-		{       // связывание префаба и View Model для каждой сущности в словаре.
-			CreateBuilding(buildingViewModel);
+		// создание динамического массива с префабами ради быстрого поиска по ключу.
+		private readonly Dictionary<int, BuildingBinder> _createdBuildingsMap = new();
+
+		// реактивная комбинированная подписка.
+		private readonly CompositeDisposable _disposables = new();
+
+		private WorldGameplayRootViewModel _viewModel;
+
+		public void Bind(WorldGameplayRootViewModel viewModel)
+		{
+			_viewModel = viewModel;
+
+			foreach(var buildingViewModel in viewModel.AllBuildings)
+			{       // связывание префаба и View Model для каждой сущности в словаре.
+				CreateBuilding(buildingViewModel);
+			}
+
+			// подписка на добавление в массив новых View Model.
+			_disposables.Add(viewModel.AllBuildings.ObserveAdd().Subscribe(e =>
+			{
+				CreateBuilding(e.Value);
+			}));
+
+			// подписка на удаление из массива View Model.
+			_disposables.Add(viewModel.AllBuildings.ObserveRemove().Subscribe(e =>
+			{
+				DestroyBuilding(e.Value);
+			}));
+
+		}
+		private void OnDestroy()
+		{		// отписка от событий при удалении.
+			_disposables.Dispose();
 		}
 
-		// подписка на добавление в массив новых View Model.
-		_disposables.Add(viewModel.AllBuildings.ObserveAdd().Subscribe(e =>
+		private void CreateBuilding(BuildingViewModel buildingViewModel)
 		{
-			CreateBuilding(e.Value);
-		}));
-
-		// подписка на удаление из массива View Model.
-		_disposables.Add(viewModel.AllBuildings.ObserveRemove().Subscribe(e =>
-		{
-			DestroyBuilding(e.Value);
-		}));
-*/
-	}
-	private void OnDestroy()
-	{		// отписка от событий при удалении.
-		_disposables.Dispose();
-	}
-
-	private void CreateBuilding(BuildingViewModel buildingViewModel)
-	{
 			// создаём уровень.
-		var buildingLevel = buildingViewModel.Level.CurrentValue;
-		var buildingType = buildingViewModel.TypeId;        // кэшируем тип по ID.
+			var buildingLevel = buildingViewModel.Level.CurrentValue;
+			var buildingType = buildingViewModel.ConfigId;        // кэшируем тип по ID.
 			// формируем путь для префаба. Также можно вытащить из buildingViewModel.
-		var prefabBuildingLevelPath = $"Prefabs/Gameplay/Buildings/Building_{buildingType}_{buildingLevel}";
-		var buildingPrefab = Resources.Load<BuildingBinder>(prefabBuildingLevelPath);	// загружаем префаб в оперативную память.
+			var prefabBuildingLevelPath = $"Prefabs/Gameplay/Buildings/Building_{buildingType}_{buildingLevel}";
+			var buildingPrefab = Resources.Load<BuildingBinder>(prefabBuildingLevelPath);	// загружаем префаб в оперативную память.
 
-		var createdBuilding = Instantiate(buildingPrefab);		// создание здания из префаба.
-		createdBuilding.Bind(buildingViewModel);                            // присваивание View Model.
+			var createdBuilding = Instantiate(buildingPrefab);		// создание здания из префаба.
+			createdBuilding.Bind(buildingViewModel);                            // присваивание View Model.
 
-		_createdBuildingsMap[buildingViewModel.BuildingEntityId] = createdBuilding;	// заполнение словаря.
-	}
-
-	private void DestroyBuilding(BuildingViewModel buildingViewModel)
-	{
-		if(_createdBuildingsMap.TryGetValue(buildingViewModel.BuildingEntityId, out var buildingBinder))
-		{	// если поиск по ключу оказался удачным.
-			Destroy(buildingBinder.gameObject);		// удаление всего объекта.
-			_createdBuildingsMap.Remove(buildingViewModel.BuildingEntityId);	// удаление элемента массива.
+			_createdBuildingsMap[buildingViewModel.BuildingEntityId] = createdBuilding;	// заполнение словаря.
 		}
-	}
 
-	private void Update()
-	{
-		if(Input.GetKeyDown(KeyCode.Space))
+		private void DestroyBuilding(BuildingViewModel buildingViewModel)
 		{
-			_viewModel.HandleTestInput();
+			if(_createdBuildingsMap.TryGetValue(buildingViewModel.BuildingEntityId, out var buildingBinder))
+			{	// если поиск по ключу оказался удачным.
+				Destroy(buildingBinder.gameObject);		// удаление всего объекта.
+				_createdBuildingsMap.Remove(buildingViewModel.BuildingEntityId);	// удаление элемента массива.
+			}
+		}
+
+		private void Update()
+		{
+			if(Input.GetKeyDown(KeyCode.Space))
+			{
+				_viewModel.HandleTestInput();
+			}
 		}
 	}
 }

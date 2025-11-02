@@ -1,5 +1,6 @@
 ﻿using System;
 using Assets.LavGame.Scripts.Game.Gameplay.Services;
+using LavGame.Scripts.Game.Gameplay.Services;
 using LavGame.Scripts.Game.Gameplay.View.Buildings;
 using LavGame.Scripts.Game.State.GameResources;
 using ObservableCollections;
@@ -12,14 +13,14 @@ namespace LavGame.Scripts.Game.Gameplay.Root.View
 {
 	public class WorldGameplayRootViewModel
 	{
-		//public readonly IObservableCollection<BuildingViewModel> AllBuildings;  // реактивный список View Model.
+		public readonly IObservableCollection<BuildingViewModel> AllBuildings;  // реактивный список View Model.
 
 		private readonly ResourcesService _resourcesService;
 
-		public WorldGameplayRootViewModel(/*BuildingsService buildingsService,*/ ResourcesService resourcesService)
+		public WorldGameplayRootViewModel(BuildingsService buildingsService, ResourcesService resourcesService)
 		{
 			_resourcesService = resourcesService;
-			//AllBuildings = buildingsService.AllBuildings;
+			AllBuildings = buildingsService.AllBuildings;
 
 			resourcesService.ObserveResource(ResourceType.SoftCurrency).Subscribe(newValue => Debug.Log($"SoftCurrency: {newValue}"));
 			resourcesService.ObserveResource(ResourceType.HardCurrency).Subscribe(newValue => Debug.Log($"HardCurrency: {newValue}"));

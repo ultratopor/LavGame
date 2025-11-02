@@ -9,8 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c2609ea31731b84ca55167c880ee019, type: 3}
-  m_Name: BuildingsSettings
+  m_Script: {fileID: 11500000, guid: e43d570703e05b34c9968658aaeb992e, type: 3}
+  m_Name: DummyBuildingLevelSettings 2
   m_EditorClassIdentifier: 
-  AllBuildings:
-  - {fileID: 11400000, guid: d157d4dcb6b2e2c41b8288cef2bb2703, type: 2}
+  <Level>k__BackingField: 2
+  <PrefabSkinPath>k__BackingField: 
+  <BaseIncome>k__BackingField: 0

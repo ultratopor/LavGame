@@ -14,7 +14,7 @@ namespace LavGame.Scripts.Game.State.Maps
 		public Map(MapData mapData)
 		{
 			/* проходимся по сущностям в оригинальном состоянии (MapState), и для каждого состояния добавляем такое же в заместителе
-			 * (proxy), и закидываем его  в ObservableList */
+			 * (proxy), и закидываем его в ObservableList */
 			Origin = mapData;
 
 			mapData.Entities.ForEach(entityData => Entities.Add(EntitiesFactory.CreateEntity(entityData)));

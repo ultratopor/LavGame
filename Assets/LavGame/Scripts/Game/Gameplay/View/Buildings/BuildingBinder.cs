@@ -1,11 +1,14 @@
-﻿using LavGame.Scripts.Game.Gameplay.View.Buildings;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class BuildingBinder : MonoBehaviour
+namespace LavGame.Scripts.Game.Gameplay.View.Buildings
 {
-	public void Bind(BuildingViewModel viewModel)
+	public class BuildingBinder : MonoBehaviour
 	{
-		transform.position = viewModel.Position.CurrentValue;
-	}
+		public void Bind(BuildingViewModel viewModel)
+		{
+			var position2D = viewModel.Position.CurrentValue;
+			transform.position = new Vector3(position2D.x, 0, position2D.y);
+		}
 	
+	}
 }

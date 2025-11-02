@@ -1,4 +1,5 @@
-﻿using Settings.Gameplay.Buildings;
+﻿using LavGame.Scripts.Game.Settings.Gameplay.Entities;
+using LavGame.Scripts.Game.Settings.Gameplay.Entities.Buildings;
 using Settings.Gameplay.Maps;
 using UnityEngine;
 
@@ -11,7 +12,7 @@ namespace Settings
 	public class GameSettings : ScriptableObject
 	{
 			// настройки геймплея.
-		public BuildingsSettings BuildingsSettings;
+		public EntitiesSettings entitiesSettings;
 		public MapsSettings MapsSettings;				// настройки карт.
 	}
 }
